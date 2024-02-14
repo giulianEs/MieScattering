@@ -1,0 +1,145 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "."
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  Max Output Level = 5
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Output Intervals(1) = 1
+  Coordinate Scaling = 1e-6
+  Solver Input File = case.sif
+  Post File = case.vtu
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.670374419e-08
+  Permittivity of Vacuum = 8.85418781e-12
+  Permeability of Vacuum = 1.25663706e-6
+  Boltzmann Constant = 1.380649e-23
+  Unit Charge = 1.6021766e-19
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 2
+End
+
+Body 2
+  Target Bodies(1) = 2
+  Name = "Body 2"
+  Equation = 1
+  Material = 1
+End
+
+Solver 3
+  Equation = Result Output
+  Output Format = Vtu
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Save Geometry Ids = True
+  Output File Name = case
+  Exec Solver = Always
+End
+
+Solver 1
+  Equation = Vector Helmholtz Equation
+  Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
+Quadratic Approximation = True
+  Linear System Preconditioning Damp Coefficient im = 1.0
+  Variable = E[E re:1 E:1]
+  Exec Solver = Always
+  Stabilize = True
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 20
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-6
+  BiCGstabl polynomial degree = 6
+  Linear System Preconditioning = vanka
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Solver 2
+  Equation = Vector Helmholtz Post Process
+  Field Variable = E
+  Procedure = "VectorHelmholtz" "VectorHelmholtzCalcFields"
+  Calculate Electric Field = True
+  Calculate Div of Poynting Vector = True
+  Calculate Poynting Vector = True
+  Calculate Magnetic Field Strength = True
+  Calculate Magnetic Flux Density = True
+  Exec Solver = Always
+  Stabilize = True
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 20
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-6
+  BiCGstabl polynomial degree = 6
+  Linear System Preconditioning = vanka
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Equation 1
+  Name = "Equation 1"
+  Angular Frequency = $ 2*pi*10e14
+$ omega = 2*pi*10e14
+$ kc= omega/(3e8)
+  Active Solvers(3) = 3 1 2
+End
+
+Material 1
+  Name = "Air"
+  Relative Permittivity = 1
+End
+
+Material 2
+  Name = "Metal"
+  Relative Permittivity = Real -4000
+End
+
+Boundary Condition 1
+  Target Boundaries(4) = 2 3 5 6 
+  Name = "PEC"
+  
+End
+
+Boundary Condition 2
+  Target Boundaries(1) = 1 
+  Name = "inport"
+  Electric Robin Coefficient im = $ kc
+  Magnetic Boundary Load 2 = Variable "Coordinate 1"; REAL MATC "cos(kc*tx)"
+End
+
+Boundary Condition 3
+  Target Boundaries(1) = 7 
+  Name = "outport"
+  
+Absorbing BC = Logical True
+End

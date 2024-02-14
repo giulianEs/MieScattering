@@ -1,0 +1,11 @@
+! ----- names for bodies -----
+$ Solid_1 = 1
+$ Solid_2 = 2
+! ----- names for boundaries -----
+$ Face_1 = 1
+$ Face_2 = 2
+$ Face_3 = 3
+$ Face_4 = 4
+$ Face_5 = 5
+$ Face_6 = 6
+$ Face_7 = 7
